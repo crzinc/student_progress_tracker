@@ -79,6 +79,7 @@ student-progress-tracker/
 ### Dataset
 
 The training dataset is the “Student Performance” dataset (semicolon-separated CSV, e.g. `student-mat.csv`).
+https://archive.ics.uci.edu/dataset/320/student+performance
 
 ### Target
 
