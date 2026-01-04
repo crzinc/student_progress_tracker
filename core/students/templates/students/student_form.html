@@ -1,0 +1,67 @@
+<!-- In students/templates/students/student_form.html -->
+{% extends 'students/base.html' %}
+
+{% block title %}{% if form.instance.pk %}Edit{% else %}Add New{% endif %} Student - Student Tracker{% endblock %}
+
+{% block content %}
+<div class="md:grid md:grid-cols-3 md:gap-6">
+    <div class="md:col-span-1">
+        <div class="px-4 sm:px-0">
+            <h3 class="text-lg font-medium leading-6 text-gray-900">{% if form.instance.pk %}Edit{% else %}Add New{% endif %} Student</h3>
+            <p class="mt-1 text-sm text-gray-600">
+                {% if form.instance.pk %}
+                    Update the student's information below.
+                {% else %}
+                    Fill in the student's information below to add them to the system.
+                {% endif %}
+            </p>
+        </div>
+    </div>
+    <div class="mt-5 md:mt-0 md:col-span-2">
+        <form method="post" class="space-y-6">
+            {% csrf_token %}
+            <div class="shadow overflow-hidden sm:rounded-md">
+                <div class="px-4 py-5 bg-white sm:p-6">
+                    <div class="grid grid-cols-6 gap-6">
+                        {% for field in form %}
+                        <div class="col-span-6 sm:col-span-3">
+                            <label for="{{ field.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                                {{ field.label }}
+                            </label>
+                            {{ field }}
+                            {% if field.errors %}
+                                <p class="mt-1 text-sm text-red-600">{{ field.errors.0 }}</p>
+                            {% endif %}
+                            {% if field.help_text %}
+                                <p class="mt-1 text-sm text-gray-500">{{ field.help_text }}</p>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="px-4 py-3 bg-gray-50 text-right sm:px-6">
+                    <a href="{% if form.instance.pk %}{% url 'students:student_detail' form.instance.pk %}{% else %}{% url 'students:student_list' %}{% endif %}" 
+                       class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 mr-3">
+                        Cancel
+                    </a>
+                    <button type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        {% if form.instance.pk %}<i class="fas fa-save mr-2"></i> Update{% else %}<i class="fas fa-plus mr-2"></i> Create{% endif %}
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Add Tailwind classes to form inputs
+    document.addEventListener('DOMContentLoaded', function() {
+        const inputs = document.querySelectorAll('input, select, textarea');
+        inputs.forEach(input => {
+            input.classList.add('mt-1', 'focus:ring-indigo-500', 'focus:border-indigo-500', 'block', 'w-full', 'shadow-sm', 'sm:text-sm', 'border-gray-300', 'rounded-md');
+        });
+    });
+</script>
+{% endblock %}

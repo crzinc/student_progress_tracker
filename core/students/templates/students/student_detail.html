@@ -1,0 +1,92 @@
+<!-- In students/templates/students/student_detail.html -->
+{% extends 'students/base.html' %}
+
+{% block title %}{{ student.name }} - Student Details{% endblock %}
+
+{% block content %}
+<!-- Existing content... -->
+
+<!-- Add this new section for prediction -->
+<div class="mt-8 bg-white shadow overflow-hidden sm:rounded-lg">
+    <div class="px-4 py-5 sm:px-6">
+        <h3 class="text-lg leading-6 font-medium text-gray-900">
+            Performance Prediction
+        </h3>
+        <p class="mt-1 max-w-2xl text-sm text-gray-500">
+            Predicted success probability based on available data.
+        </p>
+    </div>
+    <div class="border-t border-gray-200 px-4 py-5 sm:p-0">
+        <dl class="sm:divide-y sm:divide-gray-200">
+            <div class="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                <dt class="text-sm font-medium text-gray-500">
+                    Success Probability
+                </dt>
+                <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                    <div class="w-full bg-gray-200 rounded-full h-4">
+                        <div class="{{ bar_color_class }} h-4 rounded-full" 
+                            style="width: {{ success_percentage }}%"></div>
+                    </div>
+                    <p class="mt-1 text-sm text-gray-600">
+                        {{ success_probability|default_if_none:"0"|floatformat:2 }} ({{ success_percentage }}%)
+                    </p>
+                    <p class="mt-2 text-sm text-gray-500">
+                        {% if success_probability >= 0.7 %}
+                            High probability of success (GPA ≥ 3.0)
+                        {% elif success_probability >= 0.4 %}
+                            Moderate probability of success
+                        {% else %}
+                            Low probability of success
+                        {% endif %}
+                    </p>
+                </dd>
+            </div>
+            <div class="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                <dt class="text-sm font-medium text-gray-500">
+                    Key Factors
+                </dt>
+                <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                    {% if model_factors %}
+                        <ul class="list-disc pl-5">
+                            {% for factor in model_factors %}
+                                <li>{{ factor }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <ul class="list-disc pl-5">
+                            {% if student.study_time <= 2 %}
+                                <li>Low study time ({{ student.get_study_time_display }})</li>
+                            {% endif %}
+                            {% if student.past_failures > 0 %}
+                                <li>Past failures: {{ student.past_failures }}</li>
+                            {% endif %}
+                            {% if student.absences > 10 %}
+                                <li>High number of absences ({{ student.absences }})</li>
+                            {% endif %}
+                            {% if student.weekend_alcohol >= 4 or student.workday_alcohol >= 3 %}
+                                <li>High alcohol consumption</li>
+                            {% endif %}
+                            {% if student.family_relations <= 2 %}
+                                <li>Poor family relationships</li>
+                            {% endif %}
+                        </ul>
+                    {% endif %}
+                </dd>
+            </div>
+        </dl>
+    </div>
+</div>
+
+<!-- Add this to the existing style block or in your main CSS -->
+<style>
+    .bg-yellow-500 {
+        background-color: #f59e0b;
+    }
+    .bg-green-500 {
+        background-color: #10b981;
+    }
+    .bg-red-500 {
+        background-color: #ef4444;
+    }
+</style>
+{% endblock %}
